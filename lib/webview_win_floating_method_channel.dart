@@ -291,4 +291,16 @@ class MethodChannelWebviewWinFloating extends WebviewWinFloatingPlatform {
     await methodChannel.invokeMethod<bool>(
         'enableStatusBar', {"webviewId": webviewId, "isEnable": isEnable});
   }
+
+  @override
+  Future<String?> getCookies(int webviewId, String url) async {
+    final String? cookies = await methodChannel.invokeMethod<String?>(
+      'getCookies',
+      {
+        "webviewId": webviewId,
+        "url": url,
+      },
+    );
+    return cookies;
+  }
 }

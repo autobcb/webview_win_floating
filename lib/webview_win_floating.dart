@@ -521,4 +521,11 @@ class WinWebViewController {
     await WebviewWinFloatingPlatform.instance
         .enableStatusBar(_webviewId, isEnable);
   }
+
+  /// 获取指定 URL 的 cookies
+  /// 返回 cookie 字符串，格式如："name1=value1; name2=value2"
+  Future<String?> getCookies(String url) async {
+    await _initFuture;
+    return await WebviewWinFloatingPlatform.instance.getCookies(_webviewId, url);
+  }
 }

@@ -119,6 +119,10 @@ abstract class WebviewWinFloatingPlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
+  Future<String?> getCookies(int webviewId, String url) {
+    throw UnimplementedError();
+  }
+
   Future<bool> clearCookies(int webviewId) {
     throw UnimplementedError();
   }
