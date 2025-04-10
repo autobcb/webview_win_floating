@@ -699,13 +699,13 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
 
-    // 提取上级域名
+   
     size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
     if (last_dot != std::wstring::npos) {
         domain = domain.substr(last_dot);
     }
 
-    // 在前面加上'.'
+    
     if (!domain.empty() && domain[0] != L'.') {
         domain = L"." + domain;
     }
@@ -745,10 +745,10 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
-                 cookieCount++;
+                cookieCount++;
             } else {
                 std::cout << "[webview] Failed to create cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             }
@@ -781,7 +781,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
-                  cookieCount++;
+                cookieCount++;
             } else {
                 std::cout << "[webview] Failed to create cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             }
