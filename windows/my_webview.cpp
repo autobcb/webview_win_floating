@@ -686,7 +686,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         return E_FAIL;
     }
 
-    std::wstring domain = L"";
+    std::wstring domain;
     std::wstring wuri = url;
     size_t protocol_pos = wuri.find(L"://");
     if (protocol_pos != std::wstring::npos) {
