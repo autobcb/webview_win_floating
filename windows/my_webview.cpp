@@ -699,17 +699,13 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
 
-   
-   /* size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
-    if (last_dot != std::wstring::npos) {
-        domain = domain.substr(last_dot);
+    // Remove port if present
+    size_t colon_pos = domain.find(L':');
+    if (colon_pos != std::wstring::npos) {
+        domain = domain.substr(0, colon_pos);
     }
 
-    
-    if (!domain.empty() && domain[0] != L'.') {
-        domain = L"." + domain;
-    }*/
-    HRESULT hr ;
+    bool isSecure = wuri.find(L"https://") == 0;
 
     // Log domain
     std::cout << "[webview] Domain: " << utf8_encode(domain) << std::endl;
@@ -751,7 +747,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
-                cookie->put_IsSecure(TRUE);
+                cookie->put_IsSecure(isSecure);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_LAX);
 
                 // Set a specific expiration time
@@ -810,7 +806,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
-                cookie->put_IsSecure(TRUE);
+                cookie->put_IsSecure(isSecure);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_LAX);
 
                 // Set a specific expiration time
