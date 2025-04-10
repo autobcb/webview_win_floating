@@ -326,12 +326,17 @@ void WebviewWinFloatingPlugin::HandleMethodCall(
   } else if (method_call.method_name().compare("addJavaScriptChannel") == 0) {
     const auto* args = std::get_if<flutter::EncodableMap>(method_call.arguments());
     if (args) {
-      const auto* name = std::get_if<std::string>(&(*args)[flutter::EncodableValue("name")]);
-      if (name) {
-        // Register the JavaScript channel
-        std::wstring wname = std::wstring(name->begin(), name->end());
-        webview->addScriptChannelByName(wname.c_str());
-        result->Success();
+      auto name_it = args->find(flutter::EncodableValue("name"));
+      if (name_it != args->end()) {
+        const auto* name = std::get_if<std::string>(&name_it->second);
+        if (name) {
+          // Register the JavaScript channel
+          std::wstring wname = std::wstring(name->begin(), name->end());
+          webview->addScriptChannelByName(wname.c_str());
+          result->Success();
+        } else {
+          result->Error("Invalid arguments", "Name must be a string");
+        }
       } else {
         result->Error("Invalid arguments", "Name is required");
       }
