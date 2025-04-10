@@ -760,7 +760,15 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 expiryTime.wYear += 1; // Set to expire in one year
                 FILETIME fileTime;
                 SystemTimeToFileTime(&expiryTime, &fileTime);
-                cookie->put_Expires(fileTime);
+
+                // Convert FILETIME to ULARGE_INTEGER
+                ULARGE_INTEGER ul;
+                ul.LowPart = fileTime.dwLowDateTime;
+                ul.HighPart = fileTime.dwHighDateTime;
+
+                // Convert to double (seconds since epoch)
+                double expirySeconds = static_cast<double>(ul.QuadPart) / 10000000.0 - 11644473600.0;
+                cookie->put_Expires(expirySeconds);
 
                 // Add or update cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
@@ -811,7 +819,15 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 expiryTime.wYear += 1; // Set to expire in one year
                 FILETIME fileTime;
                 SystemTimeToFileTime(&expiryTime, &fileTime);
-                cookie->put_Expires(fileTime);
+
+                // Convert FILETIME to ULARGE_INTEGER
+                ULARGE_INTEGER ul;
+                ul.LowPart = fileTime.dwLowDateTime;
+                ul.HighPart = fileTime.dwHighDateTime;
+
+                // Convert to double (seconds since epoch)
+                double expirySeconds = static_cast<double>(ul.QuadPart) / 10000000.0 - 11644473600.0;
+                cookie->put_Expires(expirySeconds);
 
                 // Add or update cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
