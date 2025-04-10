@@ -661,8 +661,18 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     webview2_2->get_CookieManager(&cookieManager);
     if (cookieManager == NULL) return E_FAIL;
 
-    HRESULT hr = cookieManager->DeleteAllCookies();
-    if (FAILED(hr)) return hr;
+    std::wstring domain = L"";
+    std::wstring wuri = url;
+    size_t protocol_pos = wuri.find(L"://");
+    if (protocol_pos != std::wstring::npos) {
+        size_t domain_start = protocol_pos + 3;
+        size_t domain_end = wuri.find(L"/", domain_start);
+        if (domain_end != std::wstring::npos) {
+            domain = wuri.substr(domain_start, domain_end - domain_start);
+        } else {
+            domain = wuri.substr(domain_start);
+        }
+    }
 
     std::wstring wcookies = cookies;
     std::wstring delimiter = L";";
@@ -677,24 +687,9 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring name = token.substr(0, equal_pos);
             std::wstring value = token.substr(equal_pos + 1);
             
-            std::wstring domain = L"";
-            std::wstring wuri = url;
-            size_t protocol_pos = wuri.find(L"://");
-            if (protocol_pos != std::wstring::npos) {
-                size_t domain_start = protocol_pos + 3;
-                size_t domain_end = wuri.find(L"/", domain_start);
-                if (domain_end != std::wstring::npos) {
-                    domain = wuri.substr(domain_start, domain_end - domain_start);
-                } else {
-                    domain = wuri.substr(domain_start);
-                }
-            }
-            
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
-                cookie->put_IsHttpOnly(TRUE);
-                cookie->put_IsSecure(TRUE);
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
@@ -706,24 +701,9 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring name = wcookies.substr(0, equal_pos);
             std::wstring value = wcookies.substr(equal_pos + 1);
             
-            std::wstring domain = L"";
-            std::wstring wuri = url;
-            size_t protocol_pos = wuri.find(L"://");
-            if (protocol_pos != std::wstring::npos) {
-                size_t domain_start = protocol_pos + 3;
-                size_t domain_end = wuri.find(L"/", domain_start);
-                if (domain_end != std::wstring::npos) {
-                    domain = wuri.substr(domain_start, domain_end - domain_start);
-                } else {
-                    domain = wuri.substr(domain_start);
-                }
-            }
-            
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
-                cookie->put_IsHttpOnly(TRUE);
-                cookie->put_IsSecure(TRUE);
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
