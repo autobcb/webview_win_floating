@@ -718,6 +718,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     size_t pos = 0;
     std::wstring token;
     int cookieCount = 0;
+     HRESULT hr;
     
     while ((pos = wcookies.find(delimiter)) != std::wstring::npos) {
         token = wcookies.substr(0, pos);
