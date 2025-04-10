@@ -754,7 +754,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
@@ -798,7 +798,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+           HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
