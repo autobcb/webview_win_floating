@@ -823,7 +823,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     std::cout << "[webview] Total cookies processed: " << cookieCount << std::endl;
 
     // Get cookies after setting
-    hr = cookieManager->GetCookies(url, Callback<ICoreWebView2GetCookiesCompletedHandler>(
+    HRESULT hr = cookieManager->GetCookies(url, Callback<ICoreWebView2GetCookiesCompletedHandler>(
         [](HRESULT result, ICoreWebView2CookieList* list) -> HRESULT {
             if (SUCCEEDED(result)) {
                 UINT cookie_list_size;
