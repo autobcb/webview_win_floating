@@ -721,10 +721,17 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
+                // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
                 cookie->put_Expires(0); // Session cookie
+                
+                // Set domain and path
+                cookie->put_Domain(domain.c_str());
+                cookie->put_Path(L"/");
+                
+                // Add cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
                 if (FAILED(hr)) {
                     std::cout << "[webview] Failed to add cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
@@ -759,10 +766,17 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
+                // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
                 cookie->put_Expires(0); // Session cookie
+                
+                // Set domain and path
+                cookie->put_Domain(domain.c_str());
+                cookie->put_Path(L"/");
+                
+                // Add cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
                 if (FAILED(hr)) {
                     std::cout << "[webview] Failed to add cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
