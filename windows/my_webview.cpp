@@ -690,6 +690,9 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
+                cookie->put_IsHttpOnly(FALSE);
+                cookie->put_IsSecure(FALSE);
+                cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
@@ -704,6 +707,9 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
+                cookie->put_IsHttpOnly(FALSE);
+                cookie->put_IsSecure(FALSE);
+                cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
