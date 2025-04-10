@@ -704,14 +704,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         domain = L"." + domain;
     }
 
-    // Delete cookies for the specific domain
-    HRESULT hr = cookieManager->DeleteCookiesWithDomain(domain.c_str());
-    if (FAILED(hr)) {
-        std::cout << "[webview] Failed to delete cookies for domain: " << utf8_encode(domain) << std::endl;
-        return hr;
-    } else {
-        std::cout << "[webview] Cookies deleted for domain: " << utf8_encode(domain) << std::endl;
-    }
+    HRESULT hr;
 
     // Log domain
     std::cout << "[webview] Domain: " << utf8_encode(domain) << std::endl;
