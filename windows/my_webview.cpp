@@ -694,8 +694,8 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring value = token.substr(equal_pos + 1);
             
             // Log cookie info
-            std::wstring log = L"Setting cookie #" + std::to_wstring(++cookieCount) + L": " + name + L"=" + value;
-            OutputDebugStringW(log.c_str());
+            std::wstring log = L"{\"type\":\"cookie_log\",\"message\":\"Setting cookie #" + std::to_wstring(++cookieCount) + L": " + name + L"=" + value + L"\"}";
+            m_pWebview->PostWebMessageAsJson(log.c_str());
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
@@ -706,12 +706,12 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 cookie->put_Expires(0); // Session cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
                 if (FAILED(hr)) {
-                    std::wstring error = L"Failed to add cookie: " + name + L"=" + value;
-                    OutputDebugStringW(error.c_str());
+                    std::wstring error = L"{\"type\":\"cookie_error\",\"message\":\"Failed to add cookie: " + name + L"=" + value + L"\"}";
+                    m_pWebview->PostWebMessageAsJson(error.c_str());
                 }
             } else {
-                std::wstring error = L"Failed to create cookie: " + name + L"=" + value;
-                OutputDebugStringW(error.c_str());
+                std::wstring error = L"{\"type\":\"cookie_error\",\"message\":\"Failed to create cookie: " + name + L"=" + value + L"\"}";
+                m_pWebview->PostWebMessageAsJson(error.c_str());
             }
         }
     }
@@ -723,8 +723,8 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring value = wcookies.substr(equal_pos + 1);
             
             // Log cookie info
-            std::wstring log = L"Setting cookie #" + std::to_wstring(++cookieCount) + L": " + name + L"=" + value;
-            OutputDebugStringW(log.c_str());
+            std::wstring log = L"{\"type\":\"cookie_log\",\"message\":\"Setting cookie #" + std::to_wstring(++cookieCount) + L": " + name + L"=" + value + L"\"}";
+            m_pWebview->PostWebMessageAsJson(log.c_str());
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
@@ -735,19 +735,19 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 cookie->put_Expires(0); // Session cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
                 if (FAILED(hr)) {
-                    std::wstring error = L"Failed to add cookie: " + name + L"=" + value;
-                    OutputDebugStringW(error.c_str());
+                    std::wstring error = L"{\"type\":\"cookie_error\",\"message\":\"Failed to add cookie: " + name + L"=" + value + L"\"}";
+                    m_pWebview->PostWebMessageAsJson(error.c_str());
                 }
             } else {
-                std::wstring error = L"Failed to create cookie: " + name + L"=" + value;
-                OutputDebugStringW(error.c_str());
+                std::wstring error = L"{\"type\":\"cookie_error\",\"message\":\"Failed to create cookie: " + name + L"=" + value + L"\"}";
+                m_pWebview->PostWebMessageAsJson(error.c_str());
             }
         }
     }
 
     // Log total cookies processed
-    std::wstring summary = L"Total cookies processed: " + std::to_wstring(cookieCount);
-    OutputDebugStringW(summary.c_str());
+    std::wstring summary = L"{\"type\":\"cookie_summary\",\"message\":\"Total cookies processed: " + std::to_wstring(cookieCount) + L"\"}";
+    m_pWebview->PostWebMessageAsJson(summary.c_str());
 
     return S_OK;
 }

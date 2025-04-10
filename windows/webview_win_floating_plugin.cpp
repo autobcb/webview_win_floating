@@ -312,6 +312,32 @@ void WebviewWinFloatingPlugin::HandleMethodCall(
     auto cookies = std::get<std::string>(arguments[flutter::EncodableValue("cookies")]);
     HRESULT hr = webview->setCookies(toWideString(url), toWideString(cookies));
     result->Success(flutter::EncodableValue(SUCCEEDED(hr)));
+  } else if (method_call.method_name().compare("getPlatformVersion") == 0) {
+    std::ostringstream version_stream;
+    version_stream << "Windows ";
+    if (IsWindows10OrGreater()) {
+      version_stream << "10+";
+    } else if (IsWindows8OrGreater()) {
+      version_stream << "8";
+    } else if (IsWindows7OrGreater()) {
+      version_stream << "7";
+    }
+    result->Success(flutter::EncodableValue(version_stream.str()));
+  } else if (method_call.method_name().compare("addJavaScriptChannel") == 0) {
+    const auto* args = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    if (args) {
+      const auto* name = std::get_if<std::string>(ValueOrNull(*args, "name"));
+      if (name) {
+        // Register the JavaScript channel
+        std::wstring wname = std::wstring(name->begin(), name->end());
+        webview->addScriptChannelByName(wname.c_str());
+        result->Success();
+      } else {
+        result->Error("Invalid arguments", "Name is required");
+      }
+    } else {
+      result->Error("Invalid arguments", "Arguments must be a map");
+    }
   } else {
     result->NotImplemented();
   }
