@@ -326,7 +326,7 @@ void WebviewWinFloatingPlugin::HandleMethodCall(
   } else if (method_call.method_name().compare("addJavaScriptChannel") == 0) {
     const auto* args = std::get_if<flutter::EncodableMap>(method_call.arguments());
     if (args) {
-      const auto* name = std::get_if<std::string>(ValueOrNull(*args, "name"));
+      const auto* name = std::get_if<std::string>(&(*args)[flutter::EncodableValue("name")]);
       if (name) {
         // Register the JavaScript channel
         std::wstring wname = std::wstring(name->begin(), name->end());
