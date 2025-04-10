@@ -680,8 +680,22 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring name = token.substr(0, equal_pos);
             std::wstring value = token.substr(equal_pos + 1);
             
+            // 从URL中提取域名
+            std::wstring domain = L"";
+            std::wstring wuri = url;
+            size_t protocol_pos = wuri.find(L"://");
+            if (protocol_pos != std::wstring::npos) {
+                size_t domain_start = protocol_pos + 3;
+                size_t domain_end = wuri.find(L"/", domain_start);
+                if (domain_end != std::wstring::npos) {
+                    domain = wuri.substr(domain_start, domain_end - domain_start);
+                } else {
+                    domain = wuri.substr(domain_start);
+                }
+            }
+            
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), nullptr, nullptr, &cookie);
+            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
@@ -695,8 +709,22 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring name = wcookies.substr(0, equal_pos);
             std::wstring value = wcookies.substr(equal_pos + 1);
             
+            // 从URL中提取域名
+            std::wstring domain = L"";
+            std::wstring wuri = url;
+            size_t protocol_pos = wuri.find(L"://");
+            if (protocol_pos != std::wstring::npos) {
+                size_t domain_start = protocol_pos + 3;
+                size_t domain_end = wuri.find(L"/", domain_start);
+                if (domain_end != std::wstring::npos) {
+                    domain = wuri.substr(domain_start, domain_end - domain_start);
+                } else {
+                    domain = wuri.substr(domain_start);
+                }
+            }
+            
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), nullptr, nullptr, &cookie);
+            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
