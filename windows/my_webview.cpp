@@ -661,10 +661,8 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     webview2_2->get_CookieManager(&cookieManager);
     if (cookieManager == NULL) return E_FAIL;
 
-
     HRESULT hr = cookieManager->DeleteAllCookies();
     if (FAILED(hr)) return hr;
-
 
     std::wstring wcookies = cookies;
     std::wstring delimiter = L";";
@@ -695,6 +693,8 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
+                cookie->put_IsHttpOnly(TRUE);
+                cookie->put_IsSecure(TRUE);
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
@@ -722,6 +722,8 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             wil::com_ptr<ICoreWebView2Cookie> cookie;
             hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
+                cookie->put_IsHttpOnly(TRUE);
+                cookie->put_IsSecure(TRUE);
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
