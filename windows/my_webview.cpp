@@ -618,39 +618,47 @@ void MyWebViewImpl::openDevTools()
 HRESULT MyWebViewImpl::getCookies(LPCWSTR url, std::function<void(std::string)> callback) {
     wil::com_ptr<ICoreWebView2CookieManager> cookieManager;
     auto webview2_2 = m_pWebview.try_query<ICoreWebView2_2>();
-    if (webview2_2 == NULL) return E_FAIL;
+    if (webview2_2 == NULL) {
+        std::cout << "[webview] Failed to get WebView2_2 interface" << std::endl;
+        return E_FAIL;
+    }
 
     webview2_2->get_CookieManager(&cookieManager);
-    if (cookieManager == NULL) return E_FAIL;
+    if (cookieManager == NULL) {
+        std::cout << "[webview] Failed to get CookieManager" << std::endl;
+        return E_FAIL;
+    }
 
-    return cookieManager->GetCookies(url,
-        Callback<ICoreWebView2GetCookiesCompletedHandler>(
-            [callback](HRESULT result, ICoreWebView2CookieList* list) -> HRESULT {
-                if (SUCCEEDED(result)) {
-                    UINT cookie_list_size;
-                    list->get_Count(&cookie_list_size);
-                    
-                    std::string cookies;
-                    for (UINT i = 0; i < cookie_list_size; i++) {
-                        ICoreWebView2Cookie* cookie;
-                        list->GetValueAtIndex(i, &cookie);
-                        
-                        LPWSTR name, value;
-                        cookie->get_Name(&name);
-                        cookie->get_Value(&value);
-                        
-                        if (i > 0) cookies += "; ";
-                        cookies += utf8_encode(name) + "=" + utf8_encode(value);
-                        
-                        CoTaskMemFree(name);
-                        CoTaskMemFree(value);
-                    }
-                    callback(cookies);
-                } else {
-                    callback("");
+    // Log URL
+    std::cout << "[webview] Getting cookies for URL: " << utf8_encode(url) << std::endl;
+
+    // Get cookies
+    HRESULT hr = cookieManager->GetCookies(url, Callback<ICoreWebView2GetCookiesCompletedHandler>(
+        [callback](HRESULT result, ICoreWebView2CookieList* list) -> HRESULT {
+            if (SUCCEEDED(result)) {
+                UINT cookie_list_size;
+                list->get_Count(&cookie_list_size);
+                std::cout << "[webview] Total cookies retrieved: " << cookie_list_size << std::endl;
+                std::string cookies;
+                for (UINT i = 0; i < cookie_list_size; i++) {
+                    ICoreWebView2Cookie* cookie;
+                    list->GetValueAtIndex(i, &cookie);
+                    LPWSTR name, value;
+                    cookie->get_Name(&name);
+                    cookie->get_Value(&value);
+                    cookies += utf8_encode(name) + "=" + utf8_encode(value) + "; ";
+                    std::cout << "[webview] Retrieved cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
+                    CoTaskMemFree(name);
+                    CoTaskMemFree(value);
                 }
-                return S_OK;
-            }).Get());
+                callback(cookies);
+            } else {
+                std::cout << "[webview] Failed to retrieve cookies" << std::endl;
+            }
+            return S_OK;
+        }).Get());
+
+    return hr;
 }
 
 // Add URL decode function
@@ -708,7 +716,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     std::cout << "[webview] Domain: " << utf8_encode(domain) << std::endl;
 
     // First delete all existing cookies
-    HRESULT hr = cookieManager->DeleteAllCookies();
+    //HRESULT hr = cookieManager->DeleteAllCookies();
     if (FAILED(hr)) {
         std::cout << "[webview] Failed to delete existing cookies" << std::endl;
         return hr;
