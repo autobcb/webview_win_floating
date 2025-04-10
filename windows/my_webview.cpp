@@ -751,7 +751,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
-                cookie->put_IsSecure(FALSE);
+                cookie->put_IsSecure(TRUE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
 
                 // Set a specific expiration time
@@ -810,7 +810,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
-                cookie->put_IsSecure(FALSE);
+                cookie->put_IsSecure(TRUE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
 
                 // Set a specific expiration time
