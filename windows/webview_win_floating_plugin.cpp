@@ -307,6 +307,11 @@ void WebviewWinFloatingPlugin::HandleMethodCall(
     webview->getCookies(toWideString(url), [shared_result](std::string cookies) {
         shared_result->Success(flutter::EncodableValue(cookies));
     });
+  } else if (method_call.method_name().compare("setCookies") == 0) {
+    auto url = std::get<std::string>(arguments[flutter::EncodableValue("url")]);
+    auto cookies = std::get<std::string>(arguments[flutter::EncodableValue("cookies")]);
+    HRESULT hr = webview->setCookies(toWideString(url), toWideString(cookies));
+    result->Success(flutter::EncodableValue(SUCCEEDED(hr)));
   } else {
     result->NotImplemented();
   }

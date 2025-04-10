@@ -93,6 +93,7 @@ public:
     void openDevTools() override;
 
     HRESULT getCookies(LPCWSTR url, std::function<void(std::string)> callback);
+    HRESULT setCookies(LPCWSTR url, LPCWSTR cookies);
 
 private:
     template<class T> wil::com_ptr<T> getProfile();
@@ -650,4 +651,67 @@ HRESULT MyWebViewImpl::getCookies(LPCWSTR url, std::function<void(std::string)> 
                 }
                 return S_OK;
             }).Get());
+}
+
+HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
+    wil::com_ptr<ICoreWebView2CookieManager> cookieManager;
+    auto webview2_2 = m_pWebview.try_query<ICoreWebView2_2>();
+    if (webview2_2 == NULL) return E_FAIL;
+
+    webview2_2->get_CookieManager(&cookieManager);
+    if (cookieManager == NULL) return E_FAIL;
+
+    // 先清除现有cookie
+    HRESULT hr = cookieManager->DeleteAllCookies();
+    if (FAILED(hr)) return hr;
+
+    // 解析并设置新的cookie
+    std::wstring wcookies = cookies;
+    std::wstring delimiter = L";";
+    size_t pos = 0;
+    std::wstring token;
+    while ((pos = wcookies.find(delimiter)) != std::wstring::npos) {
+        token = wcookies.substr(0, pos);
+        wcookies.erase(0, pos + delimiter.length());
+        
+        // 创建cookie
+        wil::com_ptr<ICoreWebView2Cookie> cookie;
+        hr = cookieManager->CreateCookie(L"", L"", L"", &cookie);
+        if (SUCCEEDED(hr)) {
+            // 设置cookie属性
+            size_t equal_pos = token.find(L"=");
+            if (equal_pos != std::wstring::npos) {
+                std::wstring name = token.substr(0, equal_pos);
+                std::wstring value = token.substr(equal_pos + 1);
+                cookie->put_Name(name.c_str());
+                cookie->put_Value(value.c_str());
+                cookie->put_Domain(L"");
+                cookie->put_Path(L"/");
+                
+                // 添加cookie
+                cookieManager->AddOrUpdateCookie(cookie.get());
+            }
+        }
+    }
+    
+    // 处理最后一个cookie
+    if (!wcookies.empty()) {
+        wil::com_ptr<ICoreWebView2Cookie> cookie;
+        hr = cookieManager->CreateCookie(L"", L"", L"", &cookie);
+        if (SUCCEEDED(hr)) {
+            size_t equal_pos = wcookies.find(L"=");
+            if (equal_pos != std::wstring::npos) {
+                std::wstring name = wcookies.substr(0, equal_pos);
+                std::wstring value = wcookies.substr(equal_pos + 1);
+                cookie->put_Name(name.c_str());
+                cookie->put_Value(value.c_str());
+                cookie->put_Domain(L"");
+                cookie->put_Path(L"/");
+                
+                cookieManager->AddOrUpdateCookie(cookie.get());
+            }
+        }
+    }
+
+    return S_OK;
 }

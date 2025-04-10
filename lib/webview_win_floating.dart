@@ -528,4 +528,9 @@ class WinWebViewController {
     await _initFuture;
     return await WebviewWinFloatingPlatform.instance.getCookies(_webviewId, url);
   }
+
+  Future<void> setCookies(String url,String cookies) async {
+    await _initFuture;
+    await WebviewWinFloatingPlatform.instance.setCookies(_webviewId, url,cookies);
+  }
 }

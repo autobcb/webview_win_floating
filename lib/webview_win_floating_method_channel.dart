@@ -303,4 +303,16 @@ class MethodChannelWebviewWinFloating extends WebviewWinFloatingPlatform {
     );
     return cookies;
   }
+
+  @override
+  Future<void> setCookies(int webviewId, String url, String cookies) async {
+   await methodChannel.invokeMethod(
+      'setCookies',
+      {
+        "webviewId": webviewId,
+        "url": url,
+        "cookies":cookies,
+      },
+    );
+  }
 }

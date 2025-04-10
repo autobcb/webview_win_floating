@@ -68,4 +68,5 @@ public:
 	virtual void openDevTools() = 0;
 
 	virtual HRESULT getCookies(LPCWSTR url, std::function<void(std::string)> callback) = 0;
+	virtual HRESULT setCookies(LPCWSTR url, LPCWSTR cookies) = 0;
 };
