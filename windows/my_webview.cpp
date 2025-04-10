@@ -699,18 +699,16 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
 
-    
-    /*size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
+    // 提取上级域名
+    size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
     if (last_dot != std::wstring::npos) {
         domain = domain.substr(last_dot);
     }
 
-    
+    // 在前面加上'.'
     if (!domain.empty() && domain[0] != L'.') {
         domain = L"." + domain;
-    }*/
-
-    HRESULT hr;
+    }
 
     // Log domain
     std::cout << "[webview] Domain: " << utf8_encode(domain) << std::endl;
