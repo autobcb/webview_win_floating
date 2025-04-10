@@ -19,18 +19,25 @@ class WebviewWinFloatingPlugin {
       name: 'cookieLogger',
       onMessageReceived: (JavaScriptMessage message) {
         final data = json.decode(message.message);
-        if (data['type'] == 'cookie_log') {
-          print('Cookie Log: ${data['message']}');
-        } else if (data['type'] == 'cookie_error') {
-          print('Cookie Error: ${data['message']}');
-        } else if (data['type'] == 'cookie_summary') {
-          print('Cookie Summary: ${data['message']}');
+        switch (data['type']) {
+          case 'info':
+            print('Cookie Info: ${data['message']}');
+            break;
+          case 'error':
+            print('Cookie Error: ${data['message']}');
+            break;
+          case 'cookie':
+            print('Cookie: ${data['name']}=${data['value']}');
+            break;
+          case 'summary':
+            print('Cookie Summary: ${data['message']}');
+            break;
         }
       },
     );
 
     // Register the JavaScript channel
-    channel.invokeMethod('addJavaScriptChannel', {'name': 'cookieLogger'});
+    channel.invokeMethod('addScriptChannelByName', {'channelName': 'cookieLogger'});
   }
 
   Future<dynamic> handleMethodCall(MethodCall call) async {
