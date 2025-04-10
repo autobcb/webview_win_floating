@@ -747,7 +747,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(),  L"v1.qingtian618.cn", L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 // Set cookie properties
                 cookieCount++;
@@ -757,7 +757,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
     
-    if (!wcookies.empty()) {
+    /*if (!wcookies.empty()) {
         // Trim whitespace
         wcookies.erase(0, wcookies.find_first_not_of(L" "));
         wcookies.erase(wcookies.find_last_not_of(L" ") + 1);
@@ -788,7 +788,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 std::cout << "[webview] Failed to create cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             }
         }
-    }
+    }*/
 
     // Log summary
     std::cout << "[webview] Total cookies processed: " << cookieCount << std::endl;
