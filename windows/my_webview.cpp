@@ -746,7 +746,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
-                cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_LAX);
+                cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
                 cookie->put_Expires(0); // Session cookie
                 
                 // Add cookie
@@ -790,7 +790,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 // Set cookie properties
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
-                cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_LAX);
+                cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
                 cookie->put_Expires(0); // Session cookie
                 
                 // Add cookie
