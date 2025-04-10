@@ -674,6 +674,10 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
 
+    // First delete all existing cookies
+    HRESULT hr = cookieManager->DeleteAllCookies();
+    if (FAILED(hr)) return hr;
+
     std::wstring wcookies = cookies;
     std::wstring delimiter = L";";
     size_t pos = 0;
@@ -688,11 +692,12 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring value = token.substr(equal_pos + 1);
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
+                cookie->put_Expires(0); // Session cookie
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
@@ -705,11 +710,12 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             std::wstring value = wcookies.substr(equal_pos + 1);
             
             wil::com_ptr<ICoreWebView2Cookie> cookie;
-            HRESULT hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
+            hr = cookieManager->CreateCookie(name.c_str(), value.c_str(), domain.c_str(), L"/", &cookie);
             if (SUCCEEDED(hr)) {
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
+                cookie->put_Expires(0); // Session cookie
                 cookieManager->AddOrUpdateCookie(cookie.get());
             }
         }
