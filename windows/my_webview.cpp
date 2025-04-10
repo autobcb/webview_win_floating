@@ -653,6 +653,25 @@ HRESULT MyWebViewImpl::getCookies(LPCWSTR url, std::function<void(std::string)> 
             }).Get());
 }
 
+// Add URL decode function
+std::wstring urlDecode(const std::wstring& input) {
+    std::wstring result;
+    result.reserve(input.length());
+    for (size_t i = 0; i < input.length(); ++i) {
+        if (input[i] == L'%' && i + 2 < input.length()) {
+            std::wstring hex = input.substr(i + 1, 2);
+            wchar_t decoded = static_cast<wchar_t>(std::stoi(hex, nullptr, 16));
+            result += decoded;
+            i += 2;
+        } else if (input[i] == L'+') {
+            result += L' ';
+        } else {
+            result += input[i];
+        }
+    }
+    return result;
+}
+
 HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     wil::com_ptr<ICoreWebView2CookieManager> cookieManager;
     auto webview2_2 = m_pWebview.try_query<ICoreWebView2_2>();
@@ -715,6 +734,9 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             value.erase(0, value.find_first_not_of(L" "));
             value.erase(value.find_last_not_of(L" ") + 1);
             
+            // URL decode the value
+            value = urlDecode(value);
+            
             // Log cookie info
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
             
@@ -755,6 +777,9 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
             name.erase(name.find_last_not_of(L" ") + 1);
             value.erase(0, value.find_first_not_of(L" "));
             value.erase(value.find_last_not_of(L" ") + 1);
+            
+            // URL decode the value
+            value = urlDecode(value);
             
             // Log cookie info
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
