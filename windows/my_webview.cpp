@@ -661,11 +661,11 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     webview2_2->get_CookieManager(&cookieManager);
     if (cookieManager == NULL) return E_FAIL;
 
-    // 先清除现有cookie
+
     HRESULT hr = cookieManager->DeleteAllCookies();
     if (FAILED(hr)) return hr;
 
-    // 设置cookie
+
     std::wstring wcookies = cookies;
     std::wstring delimiter = L";";
     size_t pos = 0;
@@ -674,13 +674,11 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         token = wcookies.substr(0, pos);
         wcookies.erase(0, pos + delimiter.length());
         
-        // 创建cookie
         size_t equal_pos = token.find(L"=");
         if (equal_pos != std::wstring::npos) {
             std::wstring name = token.substr(0, equal_pos);
             std::wstring value = token.substr(equal_pos + 1);
             
-            // 从URL中提取域名
             std::wstring domain = L"";
             std::wstring wuri = url;
             size_t protocol_pos = wuri.find(L"://");
@@ -702,14 +700,12 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
     
-    // 处理最后一个cookie
     if (!wcookies.empty()) {
         size_t equal_pos = wcookies.find(L"=");
         if (equal_pos != std::wstring::npos) {
             std::wstring name = wcookies.substr(0, equal_pos);
             std::wstring value = wcookies.substr(equal_pos + 1);
             
-            // 从URL中提取域名
             std::wstring domain = L"";
             std::wstring wuri = url;
             size_t protocol_pos = wuri.find(L"://");
