@@ -809,5 +809,26 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     // Log summary
     std::cout << "[webview] Total cookies processed: " << cookieCount << std::endl;
 
+    // Get cookies after setting
+    hr = cookieManager->GetCookies(url, Callback<ICoreWebView2GetCookiesCompletedHandler>(
+        [](HRESULT result, ICoreWebView2CookieList* list) -> HRESULT {
+            if (SUCCEEDED(result)) {
+                UINT cookie_list_size;
+                list->get_Count(&cookie_list_size);
+                std::cout << "[webview] Total cookies after setting: " << cookie_list_size << std::endl;
+                for (UINT i = 0; i < cookie_list_size; i++) {
+                    ICoreWebView2Cookie* cookie;
+                    list->GetValueAtIndex(i, &cookie);
+                    LPWSTR name, value;
+                    cookie->get_Name(&name);
+                    cookie->get_Value(&value);
+                    std::cout << "[webview] Cookie after setting: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
+                    CoTaskMemFree(name);
+                    CoTaskMemFree(value);
+                }
+            }
+            return S_OK;
+        }).Get());
+
     return S_OK;
 }
