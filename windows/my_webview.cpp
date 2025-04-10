@@ -699,6 +699,11 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         }
     }
 
+    // Add '.' to domain for subdomain compatibility
+    if (!domain.empty() && domain[0] != L'.') {
+        domain = L"." + domain;
+    }
+
     // Log domain
     std::cout << "[webview] Domain: " << utf8_encode(domain) << std::endl;
 
