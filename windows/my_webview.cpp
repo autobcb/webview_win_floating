@@ -717,10 +717,10 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
 
     // First delete all existing cookies
     //HRESULT hr = cookieManager->DeleteAllCookies();
-    if (FAILED(hr)) {
-        std::cout << "[webview] Failed to delete existing cookies" << std::endl;
-        return hr;
-    }
+    //if (FAILED(hr)) {
+    //    std::cout << "[webview] Failed to delete existing cookies" << std::endl;
+   //     return hr;
+   // }
 
     std::wstring wcookies = cookies;
     std::wstring delimiter = L";";
