@@ -700,7 +700,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     }
 
    
-    size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
+   /* size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
     if (last_dot != std::wstring::npos) {
         domain = domain.substr(last_dot);
     }
@@ -708,7 +708,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     
     if (!domain.empty() && domain[0] != L'.') {
         domain = L"." + domain;
-    }
+    }*/
     HRESULT hr ;
 
     // Log domain
@@ -753,7 +753,14 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
-                cookie->put_Expires(0); // Session cookie
+
+                // Set a specific expiration time
+                SYSTEMTIME expiryTime;
+                GetSystemTime(&expiryTime);
+                expiryTime.wYear += 1; // Set to expire in one year
+                FILETIME fileTime;
+                SystemTimeToFileTime(&expiryTime, &fileTime);
+                cookie->put_Expires(fileTime);
 
                 // Add or update cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
@@ -797,7 +804,14 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
                 cookie->put_IsHttpOnly(FALSE);
                 cookie->put_IsSecure(FALSE);
                 cookie->put_SameSite(COREWEBVIEW2_COOKIE_SAME_SITE_KIND_NONE);
-                cookie->put_Expires(0); // Session cookie
+
+                // Set a specific expiration time
+                SYSTEMTIME expiryTime;
+                GetSystemTime(&expiryTime);
+                expiryTime.wYear += 1; // Set to expire in one year
+                FILETIME fileTime;
+                SystemTimeToFileTime(&expiryTime, &fileTime);
+                cookie->put_Expires(fileTime);
 
                 // Add or update cookie
                 hr = cookieManager->AddOrUpdateCookie(cookie.get());
