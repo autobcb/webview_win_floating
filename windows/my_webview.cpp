@@ -700,10 +700,20 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
         token = wcookies.substr(0, pos);
         wcookies.erase(0, pos + delimiter.length());
         
+        // Trim whitespace
+        token.erase(0, token.find_first_not_of(L" "));
+        token.erase(token.find_last_not_of(L" ") + 1);
+        
         size_t equal_pos = token.find(L"=");
         if (equal_pos != std::wstring::npos) {
             std::wstring name = token.substr(0, equal_pos);
             std::wstring value = token.substr(equal_pos + 1);
+            
+            // Trim whitespace from name and value
+            name.erase(0, name.find_first_not_of(L" "));
+            name.erase(name.find_last_not_of(L" ") + 1);
+            value.erase(0, value.find_first_not_of(L" "));
+            value.erase(value.find_last_not_of(L" ") + 1);
             
             // Log cookie info
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
@@ -728,10 +738,20 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     }
     
     if (!wcookies.empty()) {
+        // Trim whitespace
+        wcookies.erase(0, wcookies.find_first_not_of(L" "));
+        wcookies.erase(wcookies.find_last_not_of(L" ") + 1);
+        
         size_t equal_pos = wcookies.find(L"=");
         if (equal_pos != std::wstring::npos) {
             std::wstring name = wcookies.substr(0, equal_pos);
             std::wstring value = wcookies.substr(equal_pos + 1);
+            
+            // Trim whitespace from name and value
+            name.erase(0, name.find_first_not_of(L" "));
+            name.erase(name.find_last_not_of(L" ") + 1);
+            value.erase(0, value.find_first_not_of(L" "));
+            value.erase(value.find_last_not_of(L" ") + 1);
             
             // Log cookie info
             std::cout << "[webview] Setting cookie: " << utf8_encode(name) << "=" << utf8_encode(value) << std::endl;
