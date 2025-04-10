@@ -700,7 +700,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     }
 
     
-    size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
+    /*size_t last_dot = domain.rfind(L'.', domain.rfind(L'.') - 1);
     if (last_dot != std::wstring::npos) {
         domain = domain.substr(last_dot);
     }
@@ -708,7 +708,7 @@ HRESULT MyWebViewImpl::setCookies(LPCWSTR url, LPCWSTR cookies) {
     
     if (!domain.empty() && domain[0] != L'.') {
         domain = L"." + domain;
-    }
+    }*/
 
     HRESULT hr;
 
